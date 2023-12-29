@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +30,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/tasks/'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,10 +64,12 @@ INTERNAL_IPS = [
 
 ROOT_URLCONF = 'task_manager_by_mrm.urls'
 
+TEMPLATES_DIR = BASE_DIR/'templates'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,6 +135,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Custom Media Handling Path
+MEDIA_URL = '/media_uploads/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_uploads')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

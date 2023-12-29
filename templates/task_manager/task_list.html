@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Task List{% endblock %}
+
+{% block content %}
+<h2>Task Manager</h2>
+<div>
+  {% if user.is_authenticated %}
+  <p>Welcome, {{ user.username }}!</p>
+  <a href="{% url 'logout' %}">Logout</a>
+  {% else %}
+  <p>You are not logged in.</p>
+  <!-- You can add a login link here if needed -->
+  {% endif %}
+</div>
+<ul>
+  {% for task in tasks %}
+  <li>
+    {{ task.title }} - {{ task.description }} - {{ task.due_date }} - Priority: {{ task.get_priority_display }}
+    <a href="{% url 'task_update' pk=task.pk %}">Edit</a>
+    <a href="{% url 'task_delete' pk=task.pk %}">Delete</a>
+  </li>
+  {% endfor %}
+</ul>
+<a href="{% url 'task_create' %}">Create a new task</a>
+
+{% endblock %}
