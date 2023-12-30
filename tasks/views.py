@@ -37,6 +37,7 @@ class SignUpView(CreateView):
         login(self.request, self.object)
         return response
     
+    
 class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'task_manager/task_list.html'
@@ -114,5 +115,3 @@ class TaskDetailView(DetailView):
 def about(request):
     return render(request, 'about.html')
 
-class HomeView(TemplateView):
-    template_name = 'home.html'
