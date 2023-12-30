@@ -1,11 +1,26 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>{% if form.instance.id %}Edit{% else %}Create{% endif %} Task</h2>
-<form method="post" enctype="multipart/form-data">
+  <h2>Edit Task: {{ task.title }}</h2>
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
-<a href="{% url 'task_list' %}">Cancel</a>
+    
+    <!-- Render the photo_form here -->
+    {{ form.photo_form.as_p }}
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <h3>Task Photos</h3>
+  <ul>
+    {% for photo in photos %}
+      <li>
+        <img src="{{ photo.image.url }}" alt="{{ photo.image.name }}">
+        <a href="{% url 'photo_delete' photo.id %}">Delete Photo</a>
+      </li>
+    {% endfor %}
+  </ul>
+  
+  <a href="{% url 'task_list' %}">Back to Task List</a>
 {% endblock %}
