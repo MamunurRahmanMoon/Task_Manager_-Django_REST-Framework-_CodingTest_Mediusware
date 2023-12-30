@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
 from django.views import generic
+from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth import login, logout
 
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Task, Photo
 from .forms import SignupForm, TaskForm, PhotoForm
@@ -42,7 +43,24 @@ class TaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        queryset = Task.objects.filter(user=self.request.user)
+
+        # Search by title
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(title__icontains=search_query)
+
+        # Filter by due date
+        due_date_filter = self.request.GET.get('due_date', '')
+        if due_date_filter:
+            # Assuming 'due_date_filter' is in the format 'YYYY-MM-DD'
+            queryset = queryset.filter(due_date=due_date_filter)
+
+        # Add similar logic for other filters (Priority, is_complete)
+
+        return queryset
+    
+
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
@@ -69,7 +87,7 @@ class TaskUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['photos'] = self.object.photo_set.all()  #Here we Retrieve associated photos for the task
+        context['photos'] = self.object.photo_set.all()  # Retrieve associated photos for the task
         return context
     
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
@@ -85,4 +103,16 @@ class PhotoDeleteView(DeleteView):
     def get_success_url(self):
         task_id = self.object.task.id
         return reverse_lazy('task_update', kwargs={'pk': task_id})
-    
+
+
+class TaskDetailView(DetailView):
+    model = Task
+    template_name = 'task_manager/task_detail.html'
+    context_object_name = 'task'   
+
+
+def about(request):
+    return render(request, 'about.html')
+
+class HomeView(TemplateView):
+    template_name = 'home.html'

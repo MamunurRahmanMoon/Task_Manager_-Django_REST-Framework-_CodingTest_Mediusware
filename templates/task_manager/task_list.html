@@ -3,25 +3,68 @@
 {% block title %}Task List{% endblock %}
 
 {% block content %}
-<h2>Task Manager</h2>
-<div>
-  {% if user.is_authenticated %}
-  <p>Welcome, {{ user.username }}!</p>
-  <a href="{% url 'logout' %}">Logout</a>
+<div class="container mt-3">
+  <h2 class="mb-4">Task Manager</h2>
+
+  <div class="row">
+    <div class="col-md-6">
+      {% if user.is_authenticated %}
+      <p>Welcome, {{ user.username }}!</p>
+      <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
+      {% else %}
+      <p>You are not logged in.</p>
+      <!-- You can add a login link here if needed -->
+      {% endif %}
+    </div>
+
+    <div class="col-md-6">
+      <h2>Search tasks</h2>
+      <form method="get" action="{% url 'task_list' %}" class="mb-4">
+        <div class="input-group">
+          <input type="text" name="search" placeholder="Search by title" value="{{ request.GET.search }}" class="form-control">
+          <input type="date" name="due_date" placeholder="Filter by due date" value="{{ request.GET.due_date }}" class="form-control">
+          <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Search and Filter</button>
+          </div>
+          <a href="{% url 'task_list' %}" class="btn btn-secondary ml-2">Reset</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if request.GET.search or request.GET.due_date %}
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Search result</h2>
+      <ul class="list-group">
+        {% for task in tasks %}
+        <li class="list-group-item"><a href="{% url 'task_detail' pk=task.id %}">{{ task.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
   {% else %}
-  <p>You are not logged in.</p>
-  <!-- You can add a login link here if needed -->
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Task List</h2>
+      <ul class="list-group">
+        {% for task in tasks %}
+        <li class="list-group-item">
+          {{ task.title }} - {{ task.description }} - {{ task.due_date }} - Priority: {{ task.get_priority_display }}
+          <a href="{% url 'task_update' pk=task.pk %}" class="btn btn-warning btn-sm ml-2">Edit</a>
+          <a href="{% url 'task_delete' pk=task.pk %}" class="btn btn-danger btn-sm ml-2">Delete</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
   {% endif %}
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <a href="{% url 'task_create' %}" class="btn btn-success">Create a new task</a>
+    </div>
+  </div>
 </div>
-<ul>
-  {% for task in tasks %}
-  <li>
-    {{ task.title }} - {{ task.description }} - {{ task.due_date }} - Priority: {{ task.get_priority_display }}
-    <a href="{% url 'task_update' pk=task.pk %}">Edit</a>
-    <a href="{% url 'task_delete' pk=task.pk %}">Delete</a>
-  </li>
-  {% endfor %}
-</ul>
-<a href="{% url 'task_create' %}">Create a new task</a>
 
 {% endblock %}

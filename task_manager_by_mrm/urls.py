@@ -18,15 +18,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import debug_toolbar
+from tasks.views import HomeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     path("__debug__/", include(debug_toolbar.urls)),
 
+    path('', include('tasks.urls') ),
+
     path('auth/', include('tasks.urls')),
 
     path('tasks/', include('tasks.urls')),
+
+    path('about/', include('tasks.urls')),
 
    
 ]

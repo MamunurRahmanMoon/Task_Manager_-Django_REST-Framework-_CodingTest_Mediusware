@@ -21,7 +21,7 @@ class Task(models.Model):
         return self.title
 
 class Photo(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='photo_set')
     image = models.ImageField(upload_to='task_photos/')
 
     def __str__(self):

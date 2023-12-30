@@ -5,7 +5,7 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    
+    <p>Creation Date: {{ task.creation_date }}</p>
     <!-- Render the photo_form here -->
     {{ form.photo_form.as_p }}
 
